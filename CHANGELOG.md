@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changed
-- Updates to extents for Malaysia
+- Updates to extents
 
 ## [1.6.0] - 2026-10-10
 ### Added
