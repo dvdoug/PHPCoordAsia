@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Updates to extents for Malaysia
 
 ## [1.6.0] - 2026-10-10
 ### Added
