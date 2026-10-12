@@ -17,7 +17,7 @@ REAL_CHANGELOG = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
 
 # The checked-in changelog grows an Unreleased section on every dataset pull
 # request, so the cases below use a frozen file instead of CHANGELOG.md.
-EMPTY_CHANGELOG = '# Changelog\n\n## [Unreleased]\n\n## [1.9.0] - 2026-10-10\n### Added\n- Grids for Japan\n \n## [1.5.1] - 2026-09-14\n### Changed\n- Updates to extents for Hong Kong, Macao and South Korea\n\n## [1.5.0] - 2023-11-04\n### Changed\n- More aggressive buffering of extent polygons\n\n## [1.4.0] - 2023-07-09\n### Changed\n- Switched polygon data format to GeoJSON\n\n## [1.3.0] - 2023-01-07\n### Changed\n- Improved polygon buffering\n\n## [1.2.0] - 2021-11-12\n### Changed\n- Compatible with PHPCoord v5\n\n## [1.1.0] - 2021-06-24\n### Added\n- NTv2 grid files for Japan\n\n## 1.0.0 - 2021-04-25\nInitial release\n\n[Unreleased]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.6.0...HEAD\n[1.6.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.5.1...v1.6.0\n[1.5.1]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.5.0...v1.5.1\n[1.5.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.4.0...v1.5.0\n[1.4.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.3.0...v1.4.0\n[1.3.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.2.0...v1.3.0\n[1.2.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.1.0...v1.2.0\n[1.1.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.0.0...v1.1.0\n'
+EMPTY_CHANGELOG = '# Changelog\n\n## [Unreleased]\n\n## [1.6.0] - 2026-10-10\n### Added\n- Grids for Japan\n \n## [1.5.1] - 2026-09-14\n### Changed\n- Updates to extents for Hong Kong, Macao and South Korea\n\n## [1.5.0] - 2023-11-04\n### Changed\n- More aggressive buffering of extent polygons\n\n## [1.4.0] - 2023-07-09\n### Changed\n- Switched polygon data format to GeoJSON\n\n## [1.3.0] - 2023-01-07\n### Changed\n- Improved polygon buffering\n\n## [1.2.0] - 2021-11-12\n### Changed\n- Compatible with PHPCoord v5\n\n## [1.1.0] - 2021-06-24\n### Added\n- NTv2 grid files for Japan\n\n## 1.0.0 - 2021-04-25\nInitial release\n\n[Unreleased]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.6.0...HEAD\n[1.6.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.5.1...v1.6.0\n[1.5.1]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.5.0...v1.5.1\n[1.5.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.4.0...v1.5.0\n[1.4.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.3.0...v1.4.0\n[1.3.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.2.0...v1.3.0\n[1.2.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.1.0...v1.2.0\n[1.1.0]: https://github.com/dvdoug/PHPCoordAsia/compare/v1.0.0...v1.1.0\n'
 
 
 def with_unreleased(body: str) -> str:
@@ -46,18 +46,18 @@ class PromoteTests(unittest.TestCase):
         source = with_unreleased("### Changed\n- Updates to extents\n")
         updated, version, kind = changelog.promote(source, "2026-10-11")
 
-        self.assertEqual(version, '1.9.1')
+        self.assertEqual(version, '1.6.1')
         self.assertEqual(kind, "patch")
-        self.assertIn('## [Unreleased]\n\n## [1.9.1] - 2026-10-11\n### Changed\n- Updates to extents\n\n## [1.9.0] - 2026-10-10\n', updated)
+        self.assertIn('## [Unreleased]\n\n## [1.6.1] - 2026-10-11\n### Changed\n- Updates to extents\n\n## [1.6.0] - 2026-10-10\n', updated)
         self.assertIn("- More aggressive buffering of extent polygons", updated)
-        self.assertIn('compare/v1.9.0...v1.9.1', updated)
+        self.assertIn('compare/v1.6.0...v1.6.1', updated)
         self.assertNotIn('compare/v1.6.0...HEAD', updated)
-        self.assertEqual(changelog.notes_for(updated, '1.9.1'), "### Changed\n- Updates to extents\n")
+        self.assertEqual(changelog.notes_for(updated, '1.6.1'), "### Changed\n- Updates to extents\n")
 
     def test_added_is_a_minor_even_when_changed_is_present(self) -> None:
         source = with_unreleased("### Added\n- New grid for Greenland\n### Changed\n- Updates to extents\n")
         _updated, version, kind = changelog.promote(source, "2026-10-11")
-        self.assertEqual((version, kind), ('1.10.0', "minor"))
+        self.assertEqual((version, kind), ('1.7.0', "minor"))
 
     def test_added_in_an_older_release_does_not_bump_the_minor(self) -> None:
         source = with_unreleased("### Fixed\n- Extent polygon winding\n")
@@ -67,7 +67,7 @@ class PromoteTests(unittest.TestCase):
             1,
         )
         _updated, version, kind = changelog.promote(source, "2026-10-11")
-        self.assertEqual((version, kind), ('1.9.1', "patch"))
+        self.assertEqual((version, kind), ('1.6.1', "patch"))
 
     def test_two_dot_master_links_are_left_in_that_style(self) -> None:
         source = """# Changelog
@@ -93,12 +93,12 @@ class PromoteTests(unittest.TestCase):
         source = with_unreleased("### Changed\n- Updates to extents\n")
         source = source.replace('compare/v1.6.0...HEAD', 'compare/v0.0.1...HEAD', 1)
         updated, version, _kind = changelog.promote(source, "2026-10-11")
-        self.assertEqual(version, '1.9.1')
-        self.assertIn('compare/v1.9.0...v1.9.1', updated)
+        self.assertEqual(version, '1.6.1')
+        self.assertIn('compare/v1.6.0...v1.6.1', updated)
         self.assertNotIn('compare/v0.0.1...HEAD', updated)
 
     def test_notes_for_an_existing_release_are_verbatim(self) -> None:
-        self.assertEqual(changelog.notes_for(EMPTY_CHANGELOG, '1.9.0'), '### Added\n- Grids for Japan\n \n')
+        self.assertEqual(changelog.notes_for(EMPTY_CHANGELOG, '1.6.0'), '### Added\n- Grids for Japan\n \n')
 
     def test_notes_without_a_blank_line_under_unreleased_are_a_patch(self) -> None:
         source = EMPTY_CHANGELOG.replace(
@@ -107,11 +107,11 @@ class PromoteTests(unittest.TestCase):
             1,
         )
         _updated, version, kind = changelog.promote(source, "2026-10-11")
-        self.assertEqual((version, kind), ('1.9.1', "patch"))
+        self.assertEqual((version, kind), ('1.6.1', "patch"))
 
     def test_comment_bodies(self) -> None:
         ready = changelog.comment_body(with_unreleased("### Changed\n- Updates to extents\n"), removed=False)
-        self.assertIn('release v1.9.1 (patch)', ready)
+        self.assertIn('release v1.6.1 (patch)', ready)
         self.assertTrue(ready.endswith("<!-- phpcoord-release-preview -->\n"))
 
         empty = changelog.comment_body(EMPTY_CHANGELOG, removed=False)
@@ -128,7 +128,7 @@ class PromoteTests(unittest.TestCase):
             code = changelog.main(["promote", str(path), "--date", "2026-10-11"])
             self.assertEqual(code, 0)
             written = path.read_text(encoding="utf-8")
-            self.assertIn('## [1.9.1] - 2026-10-11\n', written)
+            self.assertIn('## [1.6.1] - 2026-10-11\n', written)
 
     def test_promote_command_refuses_an_empty_section(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
